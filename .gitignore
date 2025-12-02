@@ -130,3 +130,53 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+*.pyd
+venv/
+.venv/
+env/
+.env
+
+# Testing
+.coverage
+.pytest_cache/
+htmlcov/
+.hypothesis/
+*.cover
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Project-specific
+CHECKPOINT.json
+.claude/
+.memory/archives/*.json
+outputs/
+*.log
+
+# LangSmith/AgentOps
+.langsmith/
+.agentops/
+
+# Data files
+data/checkpoints.db
+data/checkpoints.db-shm
+data/checkpoints.db-wal
+data/raw/*.pdf
+
+# Build
+dist/
+build/
+*.egg-info/
+
+# Aider config
+.aider.conf.yml
+.aider*

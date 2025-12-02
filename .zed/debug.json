@@ -1,0 +1,15 @@
+// Project-local debug tasks
+//
+// For more documentation on how to configure debug tasks,
+// see: https://zed.dev/docs/debugger
+[
+  {
+    "label": "Backend – Launch (Node.js / TypeScript)",
+    "adapter": "node2",
+    "request": "launch",
+    "program": "${workspaceFolder}/giftlink-backend/app.js",
+    "cwd": "${workspaceFolder}/giftlink-backend/",
+    "runtimeArgs": ["--loader", "ts-node/esm"],
+    "envFile": "${workspaceFolder}/.env"
+  }
+]
