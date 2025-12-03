@@ -1,5 +1,10 @@
 import React, { useState } from "react";
 import "./RegisterPage.css";
+import urlConfig from '../../config.js';
+import { useAppContext } from '../../context/AuthContext.js';
+import { useNavigate } from 'react-router-dom';
+
+
 
 function RegisterPage() {
   //insert code here to create useState hook variables for firstName, lastName, email, password
@@ -7,11 +12,39 @@ function RegisterPage() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showerr, setShowerr] = useState('');
+  const navigate = useNavigate();
+  const { setIsLoggedIn } = useAppContext();
 
   // insert code here to create handleRegister function and include console.log
   const handleRegister = () => {
-    console.log("Registering user:", firstName, lastName, email, password);
-  };
+    try{
+          const response = await fetch(`${urlConfig.backendUrl}/api/auth/register`, {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+            },
+            body: JSON.stringify({
+                            firstName: firstName,
+                            lastName: lastName,
+                            email: email,
+                            password: password
+                        })
+          })
+          const data = await response.json();
+          if (data.authtoken) {
+            localStorage.setItem('token', data.authtoken);
+            localStorage.setItem('firstName', firstName);
+            localStorage.setItem('lastName', lastName);
+            localStorage.setItem('email', email);
+            setIsLoggedIn(true);
+            navigate('/app')
+          } else {
+            setShowerr(data.message || 'Registration failed');
+          }
+    } catch (e) {
+            console.log("Error fetching details: " + e.message);
+        }
 
   return (
     <div className="container mt-5">
@@ -19,6 +52,7 @@ function RegisterPage() {
         <div className="col-md-6 col-lg-4">
           <div className="register-card p-4 border rounded">
             <h2 className="text-center mb-4 font-weight-bold">Register</h2>
+            <div className="text-danger">{showerr}</div>
             <form>
               <div className="form-group">
                 <label htmlFor="firstName">First Name:</label>
