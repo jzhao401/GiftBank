@@ -1,4 +1,12 @@
 /*jshint esversion: 8 */
+import React from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
+import MainPage from "./components/MainPage/MainPage";
+import LoginPage from "./components/LoginPage/LoginPage";
+import RegisterPage from "./components/RegisterPage/RegisterPage";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./App.css";
+import Navbar from "./components/Navbar/Navbar";
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
@@ -6,6 +14,21 @@ const pinoLogger = require("./logger");
 
 const connectToDatabase = require("./models/db");
 const { loadData } = require("./util/import-mongo/index");
+
+function App() {
+  const navigate = useNavigate();
+  return (
+    <>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<MainPage />} />
+        <Route path="/app" element={<MainPage />} />
+        <Route path="/app/login" element={<LoginPage />} />
+        <Route path="/app/register" element={<RegisterPage />} />
+      </Routes>
+    </>
+  );
+}
 
 const app = express();
 app.use("*", cors());
@@ -52,3 +75,5 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
+export default App;
