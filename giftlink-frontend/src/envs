@@ -1,0 +1,4 @@
+#MongoDB Cloud service.
+MONGO_URL="mongodb+srv://zhao401_db_user:2iHI7OEW3oAdeu7p@giftbank.wuaixph.mongodb.net/?appName=GiftBank"
+JWT_SECRET="setasecret"
+BREACT_APP_BACKEND_URL="http://127.0.0.1:3060"

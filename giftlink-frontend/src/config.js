@@ -1,3 +1,4 @@
+require('dotenv').config(./envs);
 const config = {
   backendUrl: process.env.REACT_APP_BACKEND_URL,
 };
