@@ -10,7 +10,7 @@ const dotenv = require("dotenv");
 const pino = require("pino"); // Import Pino logger
 //Step 1 - Task 3: Create a Pino logger instance
 const logger = pino(); // Create a Pino logger instance
-dotenv.config();
+dotenv.config({ path: "./envs" });
 
 //Step 1 - Task 4: Create JWT secret
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -108,11 +108,6 @@ router.put("/update", async (req, res) => {
     if (!emailHeader) {
       logger.error("Email header missing");
       return res.status(400).json({ error: "Email header is required" });
-    }
-    const validator = require("validator");
-    if (!validator.isEmail(emailHeader)) {
-      logger.error("Invalid email format");
-      return res.status(400).json({ error: "Invalid email format" });
     }
     // Task 4: Connect to MongoDB
     const client = await connectToDatabase();

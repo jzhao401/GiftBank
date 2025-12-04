@@ -1,5 +1,5 @@
 // db.js
-require("dotenv").config();
+require("dotenv").config({ path: "./envs" });
 const MongoClient = require("mongodb").MongoClient;
 
 // MongoDB connection URL with authentication options
