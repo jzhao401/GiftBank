@@ -9,6 +9,7 @@ import "./App.css";
 import Navbar from "./components/Navbar/Navbar";
 import DetailsPage from "./components/DetailsPage/DetailsPage";
 import SearchPage from "./components/SearchPage/SearchPage";
+import Profile from "./components/Profile/Profile";
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
@@ -29,6 +30,7 @@ function App() {
         <Route path="/app/register" element={<RegisterPage />} />
         <Route path="/app/product/:productId" element={<DetailsPage />} />
         <Route path="/app/search" element={<SearchPage />} />
+        <Route path="/app/profile" element={<Profile />} />
       </Routes>
     </>
   );
