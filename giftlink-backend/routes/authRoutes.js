@@ -92,4 +92,61 @@ router.post("/login", async (req, res) => {
   }
 });
 
+// {Insert it along with other imports} Task 1: Use the `body`,`validationResult` from `express-validator` for input validation
+
+router.put("/update", async (req, res) => {
+  // Task 2: Validate the input using `validationResult` and return approiate message if there is an error.
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    logger.error("Validation errors in update request", errors.array());
+    return res.status(400).json({ errors: errors.array() });
+  }
+  try {
+    // Task 3: Check if `email` is present in the header and throw an appropriate error message if not present.
+    // const emailHeader = req.headers['email'];
+    const emailHeader = req.headers["email"];
+    if (!emailHeader) {
+      logger.error("Email header missing");
+      return res.status(400).json({ error: "Email header is required" });
+    }
+    const validator = require("validator");
+    if (!validator.isEmail(emailHeader)) {
+      logger.error("Invalid email format");
+      return res.status(400).json({ error: "Invalid email format" });
+    }
+    // Task 4: Connect to MongoDB
+    const client = await connectToDatabase();
+    const db = client.db("giftsdb");
+    const collection = db.collection("users");
+    const existingUser = await collection.findOne({ email: emailHeader });
+    if (!existingUser) {
+      logger.error("User not found for update");
+      return res.status(404).json({ error: "User not found" });
+    }
+    const updateFields = {};
+    if (req.body.firstName) updateFields.firstName = req.body.firstName;
+    if (req.body.lastName) updateFields.lastName = req.body.lastName;
+    if (req.body.password) {
+      const salt = await bcryptjs.genSalt(10);
+      const hash = await bcryptjs.hash(req.body.password, salt);
+      updateFields.password = hash;
+    }
+    updateFields.updatedAt = new Date();
+    updateUser = await collection.updateOne(
+      { email: emailHeader },
+      { $set: updateFields },
+      { returnDocument: "after" },
+    );
+    const payload = { user: { id: updateUser._id.toString() } };
+    const authtoken = jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
+    // Task 5: find user credentials in database
+
+    // Task 6: update user credentials in database
+    // Task 7: create JWT authentication using secret key from .env file
+    res.json({ authtoken });
+  } catch (e) {
+    return res.status(500).send("Internal server error");
+  }
+});
+
 module.exports = router;
