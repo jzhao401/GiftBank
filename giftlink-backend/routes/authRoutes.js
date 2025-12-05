@@ -10,7 +10,7 @@ const dotenv = require("dotenv");
 const pino = require("pino"); // Import Pino logger
 //Step 1 - Task 3: Create a Pino logger instance
 const logger = pino(); // Create a Pino logger instance
-dotenv.config({ path: "../envs" });
+dotenv.config({ path: "./envs" });
 
 //Step 1 - Task 4: Create JWT secret
 const JWT_SECRET = process.env.JWT_SECRET;
