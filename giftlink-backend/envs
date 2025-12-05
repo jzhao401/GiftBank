@@ -1,4 +1,4 @@
 #MongoDB Cloud service.
-MONGO_URL="mongodb://root:D3AvE4h2JrHCVP7ITs30Hcd2@172.21.30.229:27017"
+MONGO_URL="mongodb://root:D3AvE4h2JrHCVP7ITs30Hcd2@mongodb-service:27017"
 JWT_SECRET="setasecret"
 BREACT_APP_BACKEND_URL="https://zhao401-3060.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai"
