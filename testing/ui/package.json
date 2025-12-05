@@ -1,0 +1,27 @@
+{
+    "name": "giftbank-ui-tests",
+    "version": "1.0.0",
+    "description": "UI/E2E tests for GiftBank application",
+    "scripts": {
+        "test": "playwright test",
+        "test:headed": "playwright test --headed",
+        "test:debug": "playwright test --debug",
+        "test:chromium": "playwright test --project=chromium",
+        "test:firefox": "playwright test --project=firefox",
+        "test:webkit": "playwright test --project=webkit",
+        "test:mobile": "playwright test --project='Mobile Chrome' --project='Mobile Safari'",
+        "report": "playwright show-report",
+        "install:browsers": "playwright install"
+    },
+    "keywords": [
+        "playwright",
+        "e2e",
+        "testing",
+        "ui"
+    ],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@playwright/test": "^1.40.0"
+    }
+}

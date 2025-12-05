@@ -4,7 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha",
+    "test": "mocha '../testing/backend/**/*.test.js'",
+    "test:unit": "mocha '../testing/backend/unit/**/*.test.js'",
+    "test:integration": "mocha '../testing/backend/integration/**/*.test.js'",
+    "test:api": "mocha '../testing/backend/api/**/*.test.js'",
+    "test:coverage": "nyc npm run test",
+    "test:watch": "mocha '../testing/backend/**/*.test.js' --watch",
     "start": "node app.js",
     "dev": "nodemon app.js"
   },
@@ -26,10 +31,11 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^6.3.0",
     "@testing-library/react": "^14.1.2",
-    "chai": "^4.3.10",
-    "mocha": "^10.2.0",
+    "chai": "^4.5.0",
+    "mocha": "^10.8.2",
     "nodemon": "^3.0.2",
+    "nyc": "^15.1.0",
     "sinon": "^17.0.1",
-    "supertest": "^6.3.3"
+    "supertest": "^6.3.4"
   }
 }
