@@ -10,7 +10,7 @@ import Navbar from "./components/Navbar/Navbar";
 import DetailsPage from "./components/DetailsPage/DetailsPage";
 import SearchPage from "./components/SearchPage/SearchPage";
 import Profile from "./components/Profile/Profile";
-require("dotenv").config();
+require("dotenv").config({ path: "./envs" });
 const express = require("express");
 const cors = require("cors");
 const pinoLogger = require("./logger");
