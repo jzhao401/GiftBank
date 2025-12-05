@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import "./RegisterPage.css";
-import urlConfig from '../../config.js';
+import "./RegistrationPage.css";
+import { urlConfig } from '../../config.js';
 import { useAppContext } from '../../context/AuthContext.js';
 import { useNavigate } from 'react-router-dom';
 
@@ -17,34 +17,35 @@ function RegisterPage() {
   const { setIsLoggedIn } = useAppContext();
 
   // insert code here to create handleRegister function and include console.log
-  const handleRegister = () => {
-    try{
-          const response = await fetch(`${urlConfig.backendUrl}/api/auth/register`, {
-            method: 'POST',
-            headers: {
-                'content-type': 'application/json',
-            },
-            body: JSON.stringify({
-                            firstName: firstName,
-                            lastName: lastName,
-                            email: email,
-                            password: password
-                        })
-          })
-          const data = await response.json();
-          if (data.authtoken) {
-            localStorage.setItem('token', data.authtoken);
-            localStorage.setItem('firstName', firstName);
-            localStorage.setItem('lastName', lastName);
-            localStorage.setItem('email', email);
-            setIsLoggedIn(true);
-            navigate('/app')
-          } else {
-            setShowerr(data.message || 'Registration failed');
-          }
+  const handleRegister = async () => {
+    try {
+      const response = await fetch(`${urlConfig.backendUrl}/api/auth/register`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          password: password
+        })
+      })
+      const data = await response.json();
+      if (data.authtoken) {
+        localStorage.setItem('token', data.authtoken);
+        localStorage.setItem('firstName', firstName);
+        localStorage.setItem('lastName', lastName);
+        localStorage.setItem('email', email);
+        setIsLoggedIn(true);
+        navigate('/app')
+      } else {
+        setShowerr(data.message || 'Registration failed');
+      }
     } catch (e) {
-            console.log("Error fetching details: " + e.message);
-        }
+      console.log("Error fetching details: " + e.message);
+    }
+  };
 
   return (
     <div className="container mt-5">

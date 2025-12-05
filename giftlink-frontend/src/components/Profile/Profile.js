@@ -68,12 +68,12 @@ const Profile = () => {
         //Step 1: Task 1
         //Step 1: Task 2
         //Step 1: Task 3
-        method: 'PUT'
+        method: 'PUT',
         headers: {
-                "Authorization": `Bearer ${authtoken}`,
-                "Content-Type": "application/json",
-                "Email": email,
-              },
+          "Authorization": `Bearer ${authtoken}`,
+          "Content-Type": "application/json",
+          "Email": email,
+        },
         body: JSON.stringify(payload),
       });
 

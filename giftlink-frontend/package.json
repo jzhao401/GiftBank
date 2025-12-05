@@ -19,6 +19,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "postbuild": "cp -r build ../giftwebsite/",
     "test": "react-scripts test",
     "test:unit": "react-scripts test --coverage --watchAll=false",
     "test:integration": "react-scripts test --watchAll=false",
