@@ -1,0 +1,111 @@
+╔════════════════════════════════════════════════════════════════╗
+║          GiftBank Comments Feature - Quick Reference           ║
+╠════════════════════════════════════════════════════════════════╣
+║ SETUP STEPS                                                    ║
+╠════════════════════════════════════════════════════════════════╣
+║ 1. Add Sample Data:                                           ║
+║    cd giftlink-backend && node util/add-sample-comments.js    ║
+║                                                                ║
+║ 2. Start Services (4 terminals):                              ║
+║    Terminal 1: mongod --dbpath=/path/to/db                    ║
+║    Terminal 2: cd sentiment && npm start                      ║
+║    Terminal 3: cd giftlink-backend && npm start               ║
+║    Terminal 4: cd giftlink-frontend && npm start              ║
+║                                                                ║
+║ 3. Test:                                                       ║
+║    Open http://localhost:3001 → Login → Click any gift        ║
+╠════════════════════════════════════════════════════════════════╣
+║ API ENDPOINTS                                                  ║
+╠════════════════════════════════════════════════════════════════╣
+║ GET  /api/comments/:giftId   → Fetch all comments             ║
+║ POST /api/comments/:giftId   → Add new comment                ║
+╠════════════════════════════════════════════════════════════════╣
+║ SENTIMENT COLORS                                               ║
+╠════════════════════════════════════════════════════════════════╣
+║ 🟢 Positive → Green border + light green background           ║
+║ 🔴 Negative → Red border + light red background               ║
+║ ⚪ Neutral  → Gray border + light gray background             ║
+╠════════════════════════════════════════════════════════════════╣
+║ TEST EXAMPLES                                                  ║
+╠════════════════════════════════════════════════════════════════╣
+║ Positive: "This is amazing! I love it!"                       ║
+║ Negative: "This is terrible and broken."                      ║
+║ Neutral:  "Is this still available?"                          ║
+╠════════════════════════════════════════════════════════════════╣
+║ FILES CREATED                                                  ║
+╠════════════════════════════════════════════════════════════════╣
+║ Backend:                                                       ║
+║   • routes/commentRoutes.js                                   ║
+║   • util/add-sample-comments.js                               ║
+║ Frontend:                                                      ║
+║   • Updated: DetailsPage.js & DetailsPage.css                 ║
+║ Documentation:                                                 ║
+║   • COMMENTS_FEATURE.md                                       ║
+║   • SENTIMENT_STYLING_GUIDE.md                                ║
+║   • IMPLEMENTATION_COMPLETE.md                                ║
+║ Testing:                                                       ║
+║   • testing/backend/comments.test.js                          ║
+║   • testing/frontend/DetailsPage.test.js                      ║
+╠════════════════════════════════════════════════════════════════╣
+║ PORTS                                                          ║
+╠════════════════════════════════════════════════════════════════╣
+║ MongoDB:          27017                                        ║
+║ Sentiment:        3000                                         ║
+║ Backend API:      3060                                         ║
+║ Frontend:         3001                                         ║
+╠════════════════════════════════════════════════════════════════╣
+║ TROUBLESHOOTING                                                ║
+╠════════════════════════════════════════════════════════════════╣
+║ • Comments not loading → Check MongoDB & backend are running  ║
+║ • All neutral → Check sentiment service on port 3000          ║
+║ • "Anonymous" user → User must be logged in                   ║
+║ • Can't submit → Check form has text, backend connection      ║
+╠════════════════════════════════════════════════════════════════╣
+║ RUN SETUP SCRIPT                                               ║
+╠════════════════════════════════════════════════════════════════╣
+║ ./setup-comments.sh                                            ║
+║ (Checks services, offers to add sample data, shows docs)      ║
+╠════════════════════════════════════════════════════════════════╣
+║ DOCUMENTATION                                                  ║
+╠════════════════════════════════════════════════════════════════╣
+║ Full docs: COMMENTS_FEATURE.md                                ║
+║ Styling:   SENTIMENT_STYLING_GUIDE.md                         ║
+║ Summary:   IMPLEMENTATION_COMPLETE.md                         ║
+╚════════════════════════════════════════════════════════════════╝
+
+PROJECT STRUCTURE:
+
+/GiftBank
+├── giftlink-backend/          # Backend API (port 3060)
+│   ├── routes/
+│   │   └── commentRoutes.js   # NEW: Comment endpoints
+│   └── util/
+│       └── add-sample-comments.js  # NEW: Data seeding
+├── giftlink-frontend/         # React frontend (port 3001)
+│   └── src/components/DetailsPage/
+│       ├── DetailsPage.js     # UPDATED: MongoDB integration
+│       └── DetailsPage.css    # UPDATED: Sentiment styling
+├── sentiment/                 # Sentiment service (port 3000)
+│   ├── index.js
+│   └── logger.js             # NEW: Logger utility
+├── testing/
+│   ├── backend/
+│   │   └── comments.test.js  # NEW: Backend tests
+│   └── frontend/
+│       └── DetailsPage.test.js  # NEW: Frontend tests
+├── db/                       # MongoDB data directory
+├── COMMENTS_FEATURE.md       # NEW: Feature documentation
+├── SENTIMENT_STYLING_GUIDE.md # NEW: Styling guide
+├── IMPLEMENTATION_COMPLETE.md # NEW: Completion summary
+└── setup-comments.sh         # NEW: Setup script
+
+SAMPLE COMMENT STRUCTURE:
+
+{
+  "author": "John Doe",
+  "comment": "This is amazing!",
+  "sentiment": "positive",
+  "createdAt": "2024-11-15T10:30:00.000Z"
+}
+
+STATUS: ✅ COMPLETE - All features implemented and documented
