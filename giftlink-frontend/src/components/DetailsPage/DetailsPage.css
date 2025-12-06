@@ -97,3 +97,112 @@
     margin-bottom: 20px;
     overflow: hidden;
 }
+
+/* Comment form card styling */
+.comment-form-card {
+    background-color: #f8f9fa;
+    border: 2px solid #e9ecef;
+}
+
+.comment-form-card .form-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.comment-form-card textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Comment card styling */
+.comment-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+    border-left: 4px solid #6c757d;
+}
+
+.comment-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Sentiment-based comment styling */
+.comment-positive {
+    border-left-color: #28a745;
+    background-color: #f1f9f3;
+}
+
+.comment-negative {
+    border-left-color: #dc3545;
+    background-color: #fdf4f5;
+}
+
+.comment-neutral {
+    border-left-color: #6c757d;
+    background-color: #f8f9fa;
+}
+
+/* Comment header layout */
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.comment-author {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0;
+}
+
+.comment-date {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+/* Sentiment badge styling */
+.sentiment-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.sentiment-positive {
+    background-color: #28a745;
+    color: white;
+}
+
+.sentiment-negative {
+    background-color: #dc3545;
+    color: white;
+}
+
+.sentiment-neutral {
+    background-color: #6c757d;
+    color: white;
+}
+
+/* Comment text styling */
+.comment-text {
+    color: #333;
+    line-height: 1.6;
+    margin-bottom: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .comment-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .comment-date {
+        margin-top: 5px;
+    }
+}

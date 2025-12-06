@@ -7,8 +7,11 @@ function DetailsPage() {
   const navigate = useNavigate();
   const { productId } = useParams();
   const [gift, setGift] = useState(null);
+  const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [newComment, setNewComment] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     const authenticationToken = sessionStorage.getItem("token");
@@ -37,41 +40,81 @@ function DetailsPage() {
       }
     };
 
+    // Fetch comments for the gift
+    const fetchComments = async () => {
+      try {
+        const response = await fetch(
+          `${urlConfig.backendUrl}/api/comments/${productId}`,
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch comments");
+        }
+        const data = await response.json();
+        setComments(data);
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+        // If comments fail to load, set empty array
+        setComments([]);
+      }
+    };
+
     fetchGift();
+    fetchComments();
 
     // Task 3: Scroll to top on component mount
     window.scrollTo(0, 0);
-  }, [productId]);
+  }, [productId, navigate]);
 
   const handleBackClick = () => {
     // Task 4: Handle back click
     navigate(-1);
   };
 
-  //The comments have been hardcoded for this project.
-  const comments = [
-    {
-      author: "John Doe",
-      comment: "I would like this!",
-    },
-    {
-      author: "Jane Smith",
-      comment: "Just DMed you.",
-    },
-    {
-      author: "Alice Johnson",
-      comment: "I will take it if it's still available.",
-    },
-    {
-      author: "Mike Brown",
-      comment: "This is a good one!",
-    },
-    {
-      author: "Sarah Wilson",
-      comment:
-        "My family can use one. DM me if it is still available. Thank you!",
-    },
-  ];
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!newComment.trim()) {
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      // Get username from session storage
+      const username = sessionStorage.getItem("username") || "Anonymous";
+      
+      const response = await fetch(
+        `${urlConfig.backendUrl}/api/comments/${productId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            author: username,
+            comment: newComment,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to submit comment");
+      }
+
+      const submittedComment = await response.json();
+      
+      // Add the new comment to the list
+      setComments([...comments, submittedComment]);
+      
+      // Clear the input
+      setNewComment("");
+    } catch (error) {
+      console.error("Error submitting comment:", error);
+      alert("Failed to submit comment. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -120,18 +163,67 @@ function DetailsPage() {
           </p>
         </div>
       </div>
+
       <div className="comments-section mt-4">
         <h3 className="mb-3">Comments</h3>
-        {comments.map((comment, index) => (
-          <div key={index} className="card mb-3">
-            <div className="card-body">
-              <p className="comment-author">
-                <strong>{comment.author}:</strong>
-              </p>
-              <p className="comment-text">{comment.comment}</p>
-            </div>
+        
+        {/* Comment submission form */}
+        <div className="card mb-4 comment-form-card">
+          <div className="card-body">
+            <form onSubmit={handleCommentSubmit}>
+              <div className="mb-3">
+                <label htmlFor="newComment" className="form-label">
+                  Add a comment:
+                </label>
+                <textarea
+                  id="newComment"
+                  className="form-control"
+                  rows="3"
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  placeholder="Share your thoughts..."
+                  disabled={submitting}
+                />
+              </div>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={submitting || !newComment.trim()}
+              >
+                {submitting ? "Submitting..." : "Submit Comment"}
+              </button>
+            </form>
           </div>
-        ))}
+        </div>
+
+        {/* Display existing comments */}
+        {comments.length === 0 ? (
+          <p className="text-muted">No comments yet. Be the first to comment!</p>
+        ) : (
+          comments.map((comment, index) => (
+            <div
+              key={index}
+              className={`card mb-3 comment-card comment-${comment.sentiment}`}
+            >
+              <div className="card-body">
+                <div className="comment-header">
+                  <p className="comment-author">
+                    <strong>{comment.author}</strong>
+                    <span className={`sentiment-badge sentiment-${comment.sentiment}`}>
+                      {comment.sentiment}
+                    </span>
+                  </p>
+                  {comment.createdAt && (
+                    <p className="comment-date">
+                      {new Date(comment.createdAt).toLocaleDateString()}
+                    </p>
+                  )}
+                </div>
+                <p className="comment-text">{comment.comment}</p>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

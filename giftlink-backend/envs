@@ -2,3 +2,4 @@
 MONGO_URL="mongodb://127.0.0.1:27017"
 JWT_SECRET="setasecret"
 BREACT_APP_BACKEND_URL="https://zhao401-3060.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai"
+SENTIMENT_SERVICE_URL="http://localhost:3000"
