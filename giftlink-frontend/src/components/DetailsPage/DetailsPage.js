@@ -81,7 +81,7 @@ function DetailsPage() {
 
     try {
       // Get username from session storage
-      const username = sessionStorage.getItem("username") || "Anonymous";
+      const username = sessionStorage.getItem("name") || sessionStorage.getItem("userName") || "Anonymous";
       
       const response = await fetch(
         `${urlConfig.backendUrl}/api/comments/${productId}`,

@@ -4,12 +4,15 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     const token = sessionStorage.getItem("token");
+    const name = sessionStorage.getItem("name") || sessionStorage.getItem("userName");
     setIsLoggedIn(!!token);
+    setUserName(name || "");
   }, [location]);
 
   const toggleNavbar = () => {
@@ -19,10 +22,12 @@ export default function Navbar() {
   const handleLogout = () => {
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("name");
+    sessionStorage.removeItem("userName");
     sessionStorage.removeItem("email");
+    sessionStorage.removeItem("username");
     setIsLoggedIn(false);
+    setUserName("");
     navigate("/");
-    // window.location.reload(); // Optional, but helps clear any other state
   };
 
   return (
@@ -62,18 +67,27 @@ export default function Navbar() {
         </ul>
         <ul className="navbar-nav ml-auto">
           {isLoggedIn ? (
-            <li className="nav-item">
-              <span
-                className="nav-link logout-btn"
-                style={{ cursor: "pointer" }}
-                onClick={() => {
-                  handleLogout();
-                  setIsOpen(false);
-                }}
-              >
-                Logout
-              </span>
-            </li>
+            <>
+              {userName && (
+                <li className="nav-item">
+                  <span className="nav-link user-greeting">
+                    Welcome, {userName}
+                  </span>
+                </li>
+              )}
+              <li className="nav-item">
+                <span
+                  className="nav-link logout-btn"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    handleLogout();
+                    setIsOpen(false);
+                  }}
+                >
+                  Logout
+                </span>
+              </li>
+            </>
           ) : (
             <>
               <li className="nav-item">

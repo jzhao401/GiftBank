@@ -260,3 +260,20 @@ body,
   color: white;
   text-decoration: none;
 }
+
+/* Style for user greeting */
+.nav-link.user-greeting {
+  color: #0056b3;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  margin-right: 10px;
+  background-color: #e7f1ff;
+  border-radius: 0.25rem;
+  display: flex;
+  align-items: center;
+}
+
+.nav-link.user-greeting:hover {
+  background-color: #d0e7ff;
+  cursor: default;
+}
