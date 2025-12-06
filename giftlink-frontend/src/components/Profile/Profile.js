@@ -12,16 +12,8 @@ const Profile = () => {
 
   const [editMode, setEditMode] = useState(false);
   const navigate = useNavigate();
-  useEffect(() => {
-    const authtoken = sessionStorage.getItem("token");
-    if (!authtoken) {
-      navigate("/login");
-    } else {
-      fetchUserProfile();
-    }
-  }, [navigate]);
-
-  const fetchUserProfile = async () => {
+  
+  const fetchUserProfile = React.useCallback(async () => {
     try {
       const authtoken = sessionStorage.getItem("token");
       const email = sessionStorage.getItem("email");
@@ -63,7 +55,16 @@ const Profile = () => {
       sessionStorage.clear();
       navigate("/login");
     }
-  };
+  }, [navigate]);
+
+  useEffect(() => {
+    const authtoken = sessionStorage.getItem("token");
+    if (!authtoken) {
+      navigate("/login");
+    } else {
+      fetchUserProfile();
+    }
+  }, [navigate, fetchUserProfile]);
 
   const handleEdit = () => {
     setEditMode(true);

@@ -180,3 +180,7 @@ build/
 # Aider config
 .aider.conf.yml
 .aider*
+
+# data folder
+giftlink-backend/data/
+giftlink-frontend/data

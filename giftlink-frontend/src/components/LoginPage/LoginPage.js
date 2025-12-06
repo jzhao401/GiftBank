@@ -16,7 +16,6 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [incorrect, setIncorrect] = useState("");
-  const [incorrectPassword, setIncorrectPassword] = useState(false);
   const navigate = useNavigate();
   const { setIsLoggedIn } = useAppContext();
 
