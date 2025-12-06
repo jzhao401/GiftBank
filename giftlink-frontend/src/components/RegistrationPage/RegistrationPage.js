@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./RegistrationPage.css";
 import { urlConfig } from '../../config.js';
 import { useAppContext } from '../../context/AuthContext.js';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 
 
@@ -33,14 +33,18 @@ function RegisterPage() {
       })
       const data = await response.json();
       if (data.authtoken) {
-        localStorage.setItem('token', data.authtoken);
-        localStorage.setItem('firstName', firstName);
-        localStorage.setItem('lastName', lastName);
-        localStorage.setItem('email', email);
+        sessionStorage.setItem('token', data.authtoken);
+        sessionStorage.setItem('name', `${firstName} ${lastName}`);
+        sessionStorage.setItem('email', email);
         setIsLoggedIn(true);
-        navigate('/app')
+        alert("Registration successful! Redirecting to home page...");
+        navigate('/');
       } else {
-        setShowerr(data.message || 'Registration failed');
+        if (data.error === "User already exists") {
+          setShowerr("Account already exists");
+        } else {
+          setShowerr(data.error || data.message || 'Registration failed');
+        }
       }
     } catch (e) {
       console.log("Error fetching details: " + e.message);
@@ -56,7 +60,7 @@ function RegisterPage() {
             <div className="text-danger">{showerr}</div>
             <form>
               <div className="form-group">
-                <label htmlFor="firstName">First Name:</label>
+                <label htmlFor="firstName" className="form-label">First Name:</label>
                 <input
                   type="text"
                   className="form-control"
@@ -67,7 +71,7 @@ function RegisterPage() {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="lastName">Last Name:</label>
+                <label htmlFor="lastName" className="form-label">Last Name:</label>
                 <input
                   type="text"
                   className="form-control"
@@ -78,7 +82,7 @@ function RegisterPage() {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="email">Email:</label>
+                <label htmlFor="email" className="form-label">Email:</label>
                 <input
                   type="email"
                   className="form-control"
@@ -89,7 +93,7 @@ function RegisterPage() {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="password">Password:</label>
+                <label htmlFor="password" className="form-label">Password:</label>
                 <input
                   type="password"
                   className="form-control"
@@ -100,7 +104,7 @@ function RegisterPage() {
                 />
               </div>
               <button
-                type="submit"
+                type="button"
                 className="btn btn-primary btn-block"
                 onClick={handleRegister}
               >
@@ -109,9 +113,10 @@ function RegisterPage() {
             </form>
             <p className="mt-4 text-center">
               Already a member?{" "}
-              <a href="/app/login" className="text-primary">
+              Already a member?{" "}
+              <Link to="/login" className="text-primary">
                 Login
-              </a>
+              </Link>
             </p>
           </div>
         </div>

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./LoginPage.css";
-//{{Insert code here}} //Task 1: Import urlConfig from `giftlink-frontend/src/config.js`
 import { urlConfig } from '../../config.js';
 import { useAppContext } from '../../context/AuthContext.js';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 //{{Insert code here}} //Task 2: Import useAppContext `giftlink-frontend/context/AuthContext.js`
 //{{Insert code here}} //Task 3: Import useNavigate from `react-router-dom` to handle navigation after successful registration.
 
@@ -20,11 +19,10 @@ function LoginPage() {
   const [incorrectPassword, setIncorrectPassword] = useState(false);
   const navigate = useNavigate();
   const { setIsLoggedIn } = useAppContext();
-  const bearerToken = sessionStorage.getItem('bearer-token');
 
   useEffect(() => {
     if (sessionStorage.getItem('token')) {
-      navigate('/app')
+      navigate('/');
     }
   }, [navigate])
 
@@ -36,12 +34,8 @@ function LoginPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          'Authorization': bearerToken ? `Bearer ${bearerToken}` : '',
         },
         body: JSON.stringify({ email: email, password: password }),
-        //{{Insert code here}} //Task 7: Set method
-        //{{Insert code here}} //Task 8: Set headers
-        //{{Insert code here}} //Task 9: Set body to send user details
       });
       const data = await response.json();
       if (data.authtoken) {
@@ -49,25 +43,18 @@ function LoginPage() {
         sessionStorage.setItem('name', data.userName);
         sessionStorage.setItem('email', data.userEmail);
         setIsLoggedIn(true);
-        navigate('/app');
+        navigate('/');
       } else {
-        document.getElementById("email").value = "";
-        document.getElementById("password").value = "";
+        setEmail("");
+        setPassword("");
         setIncorrect("Wrong password. Try again.");
         //Below is optional, but recommended - Clear out error message after 2 seconds
         setTimeout(() => {
           setIncorrect("");
         }, 2000);
       }
-      //{code from Step 1}
-      // Task 1: Access data coming from fetch API
-      // Task 2: Set user details
-      // Task 3: Set the user's state to log in using the `useAppContext`.
-      // Task 4: Navigate to the MainPage after logging in.
-      // Task 5: Clear input and set an error message if the password is incorrect
-      // Task 6: Display an error message to the user.
     } catch (e) {
-      setIncorrectPassword("Error fetching details: " + e.message);
+      setIncorrect("Error fetching details: " + e.message);
     }
 
   };
@@ -93,16 +80,17 @@ function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <span style={{ color: 'red', height: '.5cm', display: 'block', fontStyle: 'italic', fontSize: '12px' }}>{incorrect}</span>
+            <span className="text-danger small font-italic d-block mb-2" style={{ height: '.5cm' }}>{incorrect}</span>
             {/* insert code here to create a button that performs the `handleLogin` function on click */}
             <button className="btn btn-primary btn-block" onClick={handleLogin}>
               Login
             </button>
             <p className="mt-4 text-center">
               New here?{" "}
-              <a href="/app/register" className="text-primary">
+              New here?{" "}
+              <Link to="/register" className="text-primary">
                 Register Here
-              </a>
+              </Link>
             </p>
           </div>
         </div>

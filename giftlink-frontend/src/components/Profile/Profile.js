@@ -13,9 +13,9 @@ const Profile = () => {
   const [editMode, setEditMode] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
-    const authtoken = sessionStorage.getItem("auth-token");
+    const authtoken = sessionStorage.getItem("token");
     if (!authtoken) {
-      navigate("/app/login");
+      navigate("/login");
     } else {
       fetchUserProfile();
     }
@@ -23,21 +23,45 @@ const Profile = () => {
 
   const fetchUserProfile = async () => {
     try {
-      const authtoken = sessionStorage.getItem("auth-token");
+      const authtoken = sessionStorage.getItem("token");
       const email = sessionStorage.getItem("email");
-      const name = sessionStorage.getItem("name");
-      if (name || authtoken) {
-        const storedUserDetails = {
-          name: name,
-          email: email,
-        };
+      
+      if (!authtoken || !email) {
+        navigate("/login");
+        return;
+      }
 
-        setUserDetails(storedUserDetails);
-        setUpdatedDetails(storedUserDetails);
+      // Fetch profile from backend
+      const response = await fetch(`${urlConfig.backendUrl}/api/auth/profile`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${authtoken}`,
+          'Email': email,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const userProfile = {
+          name: data.name,
+          email: data.email,
+        };
+        
+        setUserDetails(userProfile);
+        setUpdatedDetails(userProfile);
+        
+        // Update sessionStorage with fresh data from database
+        sessionStorage.setItem("name", data.name);
+      } else {
+        // Token might be expired or invalid
+        console.error("Failed to fetch profile, status:", response.status);
+        sessionStorage.clear();
+        navigate("/login");
       }
     } catch (error) {
-      console.error(error);
-      // Handle error case
+      console.error("Error fetching profile:", error);
+      sessionStorage.clear();
+      navigate("/login");
     }
   };
 
@@ -55,19 +79,25 @@ const Profile = () => {
     e.preventDefault();
 
     try {
-      const authtoken = sessionStorage.getItem("auth-token");
+      const authtoken = sessionStorage.getItem("token");
       const email = sessionStorage.getItem("email");
 
       if (!authtoken || !email) {
-        navigate("/app/login");
+        navigate("/login");
         return;
       }
 
-      const payload = { ...updatedDetails };
+      // Split name into firstName and lastName for backend
+      const nameParts = updatedDetails.name.trim().split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+
+      const payload = {
+        firstName,
+        lastName,
+      };
+      
       const response = await fetch(`${urlConfig.backendUrl}/api/auth/update`, {
-        //Step 1: Task 1
-        //Step 1: Task 2
-        //Step 1: Task 3
         method: 'PUT',
         headers: {
           "Authorization": `Bearer ${authtoken}`,
@@ -78,26 +108,25 @@ const Profile = () => {
       });
 
       if (response.ok) {
-        // Update the user details in session storage
-        //Step 1: Task 4
+        // Update context and session storage
         setUserName(updatedDetails.name);
-        //Step 1: Task 5
         sessionStorage.setItem("name", updatedDetails.name);
         setUserDetails(updatedDetails);
         setEditMode(false);
-        // Display success message to the user
+        
+        // Display success message
         setChanged("Name Changed Successfully!");
         setTimeout(() => {
           setChanged("");
           navigate("/");
         }, 1000);
       } else {
-        // Handle error case
-        throw new Error("Failed to update profile");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to update profile");
       }
     } catch (error) {
-      console.error(error);
-      // Handle error case
+      console.error("Update error:", error);
+      alert(`Failed to update profile: ${error.message}`);
     }
   };
 

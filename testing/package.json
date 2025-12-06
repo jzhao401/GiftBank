@@ -1,15 +1,17 @@
 {
-    "name": "giftbank-tests",
-    "version": "1.0.0",
-    "description": "Test suite for GiftBank application",
-    "private": true,
-    "dependencies": {
-        "chai": "^4.3.10",
-        "mocha": "^10.2.0",
-        "sinon": "^17.0.1",
-        "supertest": "^6.3.3",
-        "@testing-library/react": "^14.1.2",
-        "@testing-library/jest-dom": "^6.3.0",
-        "@testing-library/user-event": "^13.5.0"
-    }
+  "name": "giftbank-testing",
+  "version": "1.0.0",
+  "description": "Integration tests for GiftBank application",
+  "scripts": {
+    "test": "node check-and-test.js",
+    "test:profile": "node frontend-profile-test.js",
+    "test:check": "node check-and-test.js",
+    "test:quick": "node quick-test.js",
+    "checklist": "node test-checklist.js"
+  },
+  "dependencies": {
+    "mongodb": "^6.8.0",
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {}
 }

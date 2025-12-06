@@ -10,7 +10,7 @@ function MainPage() {
     // Task 1: Write async fetch operation
     const fetchGifts = async () => {
       try {
-        const response = await fetch(`${urlConfig.baseUrl}/gifts`);
+        const response = await fetch(`${urlConfig.backendUrl}/gift/`);
         if (!response.ok) throw new Error("Network response was not ok");
         const data = await response.json();
         setGifts(data);
@@ -23,7 +23,7 @@ function MainPage() {
 
   // Task 2: Navigate to details page
   const goToDetailsPage = (productId) => {
-    navigate(`/app/product/${productId}`);
+    navigate(`/product/${productId}`);
   };
 
   // Task 3: Format timestamp
@@ -54,25 +54,25 @@ function MainPage() {
               ) : (
                 <div className="no-image-available">No Image Available</div>
               )}
+            </div>
 
-              <div className="card-body">
-                {/* // Task 5: Display gift image or placeholder */}
-                <h5 className="card-title">{gift.name}</h5>
+            <div className="card-body">
+              {/* // Task 5: Display gift image or placeholder */}
+              <h5 className="card-title">{gift.name}</h5>
 
-                <p className={`card-text ${getConditionClass(gift.condition)}`}>
-                  {gift.condition}
-                </p>
+              <p className={`card-text ${getConditionClass(gift.condition)}`}>
+                {gift.condition}
+              </p>
 
-                {/* // Task 6: Display gift image or placeholder */}
-                <p className="card-text">Date: {formatDate(gift.date_added)}</p>
+              {/* // Task 6: Display gift image or placeholder */}
+              <p className="card-text">Date: {formatDate(gift.date_added)}</p>
 
-                <button
-                  onClick={() => goToDetailsPage(gift.id)}
-                  className="btn btn-primary"
-                >
-                  View Details
-                </button>
-              </div>
+              <button
+                onClick={() => goToDetailsPage(gift.id)}
+                className="btn btn-primary"
+              >
+                View Details
+              </button>
             </div>
           </div>
         ))}

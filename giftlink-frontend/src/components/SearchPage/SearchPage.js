@@ -1,23 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./SearchPage.css";
 import { urlConfig } from "../../config";
 
 function SearchPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [ageRange, setAgeRange] = useState(6); // Initialize with minimum value
   const [searchResults, setSearchResults] = useState([]);
-  //Task 1: Define state variables for the search query, age range, and search results.
+  const [category, setCategory] = useState("");
+  const [condition, setCondition] = useState("");
+
   const categories = ["Living", "Bedroom", "Bathroom", "Kitchen", "Office"];
   const conditions = ["New", "Like New", "Older"];
+
   const handleSearch = async () => {
     // Construct the search URL based on user input
     const baseUrl = `${urlConfig.backendUrl}/api/search?`;
     const queryParams = new URLSearchParams({
       name: searchQuery,
       age_years: ageRange,
-      category: document.getElementById("categorySelect").value,
-      condition: document.getElementById("conditionSelect").value,
+      category: category,
+      condition: condition,
     }).toString();
 
     try {
@@ -36,7 +40,7 @@ function SearchPage() {
     // fetch all products
     const fetchProducts = async () => {
       try {
-        let url = `${urlConfig.backendUrl}/api/gifts`;
+        let url = `${urlConfig.backendUrl}/gift`;
         console.log(url);
         const response = await fetch(url);
         if (!response.ok) {
@@ -53,13 +57,10 @@ function SearchPage() {
     fetchProducts();
   }, []);
 
-  // Task 2. Fetch search results from the API based on user inputs.
-
   const navigate = useNavigate();
 
   const goToDetailsPage = (productId) => {
-    // Task 6. Enable navigation to the details page of a selected gift.
-    navigate(`/app/product/${productId}`);
+    navigate(`/product/${productId}`);
   };
 
   return (
@@ -71,26 +72,35 @@ function SearchPage() {
             <div className="d-flex flex-column">
               {/* Category Dropdown */}
               <label htmlFor="categorySelect">Category</label>
-              <select id="categorySelect" className="form-control my-1">
+              <select
+                id="categorySelect"
+                className="form-control my-1"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              >
                 <option value="">All</option>
-                {categories.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
                   </option>
                 ))}
               </select>
 
               {/* Condition Dropdown */}
               <label htmlFor="conditionSelect">Condition</label>
-              <select id="conditionSelect" className="form-control my-1">
+              <select
+                id="conditionSelect"
+                className="form-control my-1"
+                value={condition}
+                onChange={(e) => setCondition(e.target.value)}
+              >
                 <option value="">All</option>
-                {conditions.map((condition) => (
-                  <option key={condition} value={condition}>
-                    {condition}
+                {conditions.map((cond) => (
+                  <option key={cond} value={cond}>
+                    {cond}
                   </option>
                 ))}
               </select>
-              {/* Task 4: Implement an age range slider and display the selected value. */}
               {/* Age Range Slider */}
               <label htmlFor="ageRange">Less than {ageRange} years</label>
               <input
@@ -104,7 +114,6 @@ function SearchPage() {
               />
             </div>
           </div>
-          {/* Task 7: Add text input field for search criteria*/}
           <input
             type="text"
             className="form-control"

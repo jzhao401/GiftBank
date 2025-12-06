@@ -16,9 +16,13 @@ dotenv.config({ path: "./envs" });
 const JWT_SECRET = process.env.JWT_SECRET;
 router.post("/register", async (req, res) => {
   try {
+    // console.log("Register endpoint hit");
+    // console.log("Body:", req.body);
+    // console.log("JWT_SECRET:", JWT_SECRET);
+
     // Task 1: Connect to `giftsdb` in MongoDB through `connectToDatabase` in `db.js`
-    const client = await connectToDatabase();
-    const db = client.db("giftsdb");
+    const db = await connectToDatabase();
+    // const db = client.db("giftsdb");
     const collection = db.collection("users");
 
     // Task 2: Access MongoDB collection
@@ -34,8 +38,9 @@ router.post("/register", async (req, res) => {
     const user = { email: req.body.email, password: req.body.password };
 
     // Create JWT authentication with user._id as payload
-    const payload = { user: { id: userId } };
-    const authtoken = jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
+    // Create JWT authentication with user._id as payload
+    // const payload = { user: { id: userId } };
+    // const authtoken = jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
 
     const salt = await bcryptjs.genSalt(10);
     const hash = await bcryptjs.hash(req.body.password, salt);
@@ -48,14 +53,17 @@ router.post("/register", async (req, res) => {
       createdAt: new Date(),
     });
     const userId = result.insertedId;
+    console.log("User inserted, ID:", userId);
 
     // {{insert code here}} //Task 4: Save user details in database
     // {{insert code here}} //Task 5: Create JWT authentication with user._id as payload
     const payload = { user: { id: userId } };
     const authtoken = jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
+    console.log("Token signed");
     logger.info("User registered successfully");
-    res.json({ authtoken, email });
+    res.json({ authtoken, email: req.body.email });
   } catch (e) {
+    console.error("Error in register:", e);
     return res.status(500).send("Internal server error");
   }
 });
@@ -63,8 +71,8 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     // Task 1: Connect to `giftsdb` in MongoDB through `connectToDatabase` in `db.js`.
-    const client = await connectToDatabase();
-    const db = client.db("giftsdb");
+    const db = await connectToDatabase();
+    // const db = client.db("giftsdb");
     const collection = db.collection("users");
     const user = await collection.findOne({ email: req.body.email });
     if (!user) {
@@ -88,11 +96,58 @@ router.post("/login", async (req, res) => {
     res.json({ authtoken, userName, userEmail });
     // Task 7: Send appropriate message if user not found
   } catch (e) {
-    return res.status(500).send("Internal server error");
+    logger.error("Profile update error:", e);
+    return res.status(500).json({ error: "Internal server error" });
   }
 });
 
 // {Insert it along with other imports} Task 1: Use the `body`,`validationResult` from `express-validator` for input validation
+
+// GET /profile - Fetch user profile from database
+router.get("/profile", async (req, res) => {
+  try {
+    const authtoken = req.headers.authorization?.replace('Bearer ', '');
+    const email = req.headers.email;
+    
+    if (!authtoken || !email) {
+      logger.error("Missing auth credentials for profile fetch");
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    // Verify JWT token
+    try {
+      jwt.verify(authtoken, JWT_SECRET);
+    } catch (err) {
+      logger.error("Invalid token");
+      return res.status(401).json({ error: "Invalid or expired token" });
+    }
+    
+    // Connect to database
+    const db = await connectToDatabase();
+    const collection = db.collection("users");
+    
+    // Find user
+    const user = await collection.findOne({ email });
+    
+    if (!user) {
+      logger.error("User not found in database");
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Return user profile
+    logger.info("Profile fetched successfully for user: " + email);
+    res.json({
+      name: `${user.firstName} ${user.lastName}`,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName
+    });
+    
+  } catch (error) {
+    logger.error("Profile fetch error:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 router.put("/update", async (req, res) => {
   // Task 2: Validate the input using `validationResult` and return approiate message if there is an error.
@@ -102,16 +157,26 @@ router.put("/update", async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
   try {
-    // Task 3: Check if `email` is present in the header and throw an appropriate error message if not present.
-    // const emailHeader = req.headers['email'];
+    // Task 3: Check if `email` and `authorization` are present in headers
+    const authtoken = req.headers.authorization?.replace('Bearer ', '');
     const emailHeader = req.headers["email"];
-    if (!emailHeader) {
-      logger.error("Email header missing");
-      return res.status(400).json({ error: "Email header is required" });
+    
+    if (!authtoken || !emailHeader) {
+      logger.error("Missing auth credentials");
+      return res.status(401).json({ error: "Unauthorized - Missing token or email" });
     }
+
+    // Verify JWT token
+    try {
+      jwt.verify(authtoken, JWT_SECRET);
+    } catch (err) {
+      logger.error("Invalid or expired token");
+      return res.status(401).json({ error: "Invalid or expired token" });
+    }
+    
     // Task 4: Connect to MongoDB
-    const client = await connectToDatabase();
-    const db = client.db("giftsdb");
+    const db = await connectToDatabase();
+    // const db = client.db("giftsdb");
     const collection = db.collection("users");
     const existingUser = await collection.findOne({ email: emailHeader });
     if (!existingUser) {
@@ -127,20 +192,23 @@ router.put("/update", async (req, res) => {
       updateFields.password = hash;
     }
     updateFields.updatedAt = new Date();
-    updateUser = await collection.updateOne(
+    const updateResult = await collection.updateOne(
       { email: emailHeader },
-      { $set: updateFields },
-      { returnDocument: "after" },
+      { $set: updateFields }
     );
-    const payload = { user: { id: updateUser._id.toString() } };
-    const authtoken = jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
+    
+    // Get the updated user for creating new token
+    const updatedUser = await collection.findOne({ email: emailHeader });
+    const payload = { user: { id: updatedUser._id.toString() } };
+    const newAuthtoken = jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
     // Task 5: find user credentials in database
 
     // Task 6: update user credentials in database
     // Task 7: create JWT authentication using secret key from .env file
-    res.json({ authtoken });
+    res.json({ authtoken: newAuthtoken });
   } catch (e) {
-    return res.status(500).send("Internal server error");
+    logger.error("Profile update error:", e);
+    return res.status(500).json({ error: "Internal server error" });
   }
 });
 

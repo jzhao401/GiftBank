@@ -1,207 +1,209 @@
 # GiftBank Testing Suite
 
-This directory contains all tests for the GiftBank application, organized by test type and component.
+## Quick Start
 
-## Directory Structure
-
-```
-testing/
-├── backend/           # Backend tests (Node.js/Express)
-│   ├── unit/         # Unit tests (80% coverage target)
-│   ├── integration/  # Integration tests (20% coverage)
-│   └── api/          # API endpoint tests
-├── frontend/         # Frontend tests (React)
-│   ├── unit/         # Component unit tests (80% coverage target)
-│   └── integration/  # User flow integration tests (20% coverage)
-└── ui/               # UI/E2E tests (Playwright)
-    └── e2e/          # End-to-end browser tests
-```
-
-## Test Categories
-
-### Unit Tests (80% Coverage)
-- **Backend**: Route handlers, utility functions, business logic
-- **Frontend**: React components, hooks, utility functions
-- Focus on testing individual units in isolation with mocked dependencies
-
-### Integration Tests (20% Coverage)
-- **Backend**: Multi-route flows, database interactions
-- **Frontend**: User journeys across multiple components
-- Focus on testing how units work together
-
-### API Tests
-- HTTP endpoint testing
-- Request/response validation
-- Status code verification
-- Authentication flows
-
-### UI Tests
-- End-to-end browser automation
-- Complete user workflows
-- Cross-browser compatibility
-
-## Running Tests
-
-### Backend Tests
+### 1. View Test Checklist
 ```bash
-cd giftlink-backend
-
-# Run all tests
-npm test
-
-# Run unit tests only
-npm run test:unit
-
-# Run integration tests only
-npm run test:integration
-
-# Run API tests only
-npm run test:api
-
-# Run with coverage
-npm run test:coverage
+npm run checklist
 ```
 
-### Frontend Tests
+### 2. Run Quick Connectivity Test
 ```bash
-cd giftlink-frontend
-
-# Run all tests
-npm test
-
-# Run unit tests with coverage
-npm run test:unit -- --coverage
-
-# Run integration tests
-npm run test:integration
-
-# Run in watch mode
-npm test -- --watch
-```
-
-### UI Tests
-```bash
-cd testing/ui
-
-# Install dependencies (first time only)
 npm install
-npx playwright install
-
-# Run all UI tests
-npx playwright test
-
-# Run in headed mode (see browser)
-npx playwright test --headed
-
-# Run specific test file
-npx playwright test e2e/auth-flow.spec.js
-
-# Generate test report
-npx playwright show-report
+npm run test:quick
 ```
 
-## Coverage Requirements
-
-- **Unit Tests**: Minimum 80% code coverage
-- **Integration Tests**: Cover 20% of critical user flows
-- **API Tests**: 100% endpoint coverage
-- **UI Tests**: Cover all critical user journeys
-
-## Writing Tests
-
-### Backend Unit Test Example
-```javascript
-const { expect } = require('chai');
-const sinon = require('sinon');
-
-describe('Gift Routes', () => {
-  it('should return all gifts', async () => {
-    // Test implementation
-  });
-});
+### 3. Run Full Integration Tests
+```bash
+npm test
 ```
 
-### Frontend Unit Test Example
-```javascript
-import { render, screen } from '@testing-library/react';
-import MainPage from './MainPage';
+## Test Scripts
 
-test('renders main page', () => {
-  render(<MainPage />);
-  expect(screen.getByText(/welcome/i)).toBeInTheDocument();
-});
+| Command | Description |
+|---------|-------------|
+| `npm test` | Full integration test with pre-flight checks |
+| `npm run test:quick` | Quick backend and MongoDB connectivity test |
+| `npm run test:profile` | Profile component integration test (skip checks) |
+| `npm run checklist` | Display manual test checklist |
+
+## What Gets Tested
+
+### ✅ Backend Endpoints
+- POST /api/auth/register
+- POST /api/auth/login
+- GET /api/auth/profile ⭐ NEW
+- PUT /api/auth/update
+
+### ✅ Frontend Profile Component
+- Fetch profile from database (not just sessionStorage) ⭐ FIXED
+- Update profile with correct payload format ⭐ FIXED
+- Handle authentication errors
+- Persist data across page refreshes ⭐ FIXED
+
+### ✅ MongoDB Integration
+- User registration stores in database
+- Profile fetch reads from database
+- Profile update modifies database
+- Data persistence verification
+
+## Prerequisites
+
+### Required Services
+1. **MongoDB** running on `localhost:27017`
+   ```bash
+   mongod --dbpath /path/to/data
+   ```
+
+2. **Backend** running on `http://localhost:3060`
+   ```bash
+   cd giftlink-backend
+   npm start
+   ```
+
+3. **Frontend** (optional for manual testing)
+   ```bash
+   cd giftlink-frontend
+   npm start
+   ```
+
+### Install Dependencies
+```bash
+npm install
 ```
 
-### UI Test Example
-```javascript
-import { test, expect } from '@playwright/test';
+## Test Output
 
-test('user can login', async ({ page }) => {
-  await page.goto('http://localhost:3000');
-  // Test implementation
-});
+### Success Example
+```
+✓ MongoDB Connection: PASS
+✓ Backend Connection: PASS  
+✓ User Registration: PASS
+✓ User Login: PASS
+✓ Profile Fetch: PASS ⭐ NEW
+✓ Profile Update: PASS
+✓ MongoDB Verification: PASS
+
+Total Tests: 7
+Passed: 7
+Failed: 0
 ```
 
-## CI/CD Integration
+### Failure Example
+```
+✗ Backend is NOT running
+  Start with: cd giftlink-backend && npm start
 
-Tests can be integrated into CI/CD pipelines:
-
-```yaml
-# Example GitHub Actions
-- name: Run Backend Tests
-  run: |
-    cd giftlink-backend
-    npm install
-    npm run test:coverage
-
-- name: Run Frontend Tests
-  run: |
-    cd giftlink-frontend
-    npm install
-    npm test -- --coverage --watchAll=false
-
-- name: Run UI Tests
-  run: |
-    cd testing/ui
-    npm install
-    npx playwright install
-    npx playwright test
+Environment Not Ready - Fix Issues Above
 ```
 
-## Best Practices
+## Manual Testing
 
-1. **Write tests first** (TDD approach when possible)
-2. **Keep tests isolated** - no dependencies between tests
-3. **Use descriptive test names** - clearly state what is being tested
-4. **Mock external dependencies** - databases, APIs, third-party services
-5. **Test edge cases** - not just happy paths
-6. **Maintain test data** - use fixtures and factories
-7. **Keep tests fast** - unit tests should run in milliseconds
-8. **Review coverage reports** - identify untested code paths
+Follow the interactive checklist:
+```bash
+npm run checklist
+```
+
+### Key Tests
+1. **Profile Loading** - Visit /profile after login, data loads from DB
+2. **Page Refresh** - Refresh /profile, data persists
+3. **Profile Update** - Edit name, save, verify it updates
+4. **Cross-Tab** - Open new tab, data synced across tabs
+5. **Token Expiration** - Clear session, verify redirect to login
+
+## Files
+
+| File | Purpose |
+|------|---------|
+| `frontend-profile-test.js` | Main integration test suite |
+| `check-and-test.js` | Pre-flight checks + test runner |
+| `quick-test.js` | Fast connectivity verification |
+| `test-checklist.js` | Interactive manual test guide |
+| `package.json` | Test configuration |
 
 ## Troubleshooting
 
-### Backend Tests Failing
-- Ensure MongoDB test database is running
-- Check environment variables in `.env` file
-- Verify all dependencies are installed
+### "Cannot connect to MongoDB"
+```bash
+# Check if running
+ps aux | grep mongod
 
-### Frontend Tests Failing
-- Clear Jest cache: `npm test -- --clearCache`
-- Check for async issues - use `waitFor` from testing-library
-- Verify mock data matches expected structure
+# Start if needed
+mongod --dbpath /path/to/data
+```
 
-### UI Tests Failing
-- Ensure both backend and frontend servers are running
-- Check browser installation: `npx playwright install`
-- Review screenshots in `test-results` directory
-- Use `--headed` mode to debug visually
+### "Backend not responding"
+```bash
+cd ../giftlink-backend
+npm start
 
-## Resources
+# Check for port conflicts
+lsof -i :3060
+```
 
-- [Mocha Documentation](https://mochajs.org/)
-- [Chai Assertion Library](https://www.chaijs.com/)
-- [Supertest](https://github.com/visionmedia/supertest)
-- [React Testing Library](https://testing-library.com/react)
-- [Jest Documentation](https://jestjs.io/)
-- [Playwright Documentation](https://playwright.dev/)
+### "Tests failing"
+1. Check backend logs
+2. Verify envs file: `MONGO_URL="mongodb://127.0.0.1:27017"`
+3. Clear old test users from database
+4. Restart backend
+
+### "Profile not loading in browser"
+- Open DevTools > Network tab
+- Check for GET /api/auth/profile request
+- Verify response is 200 with user data
+- Check sessionStorage has token and email
+
+## Environment
+
+### Local Testing (Current)
+```bash
+MONGO_URL="mongodb://127.0.0.1:27017"
+REACT_APP_BACKEND_URL="http://localhost:3060"
+```
+
+### Kubernetes (Production)
+```bash
+MONGO_URL="mongodb://mongodb-service:27017"
+```
+
+## What Changed
+
+### ✅ Backend
+- Added GET /api/auth/profile endpoint
+- Returns user data from MongoDB
+- Validates JWT token
+
+### ✅ Frontend  
+- fetchUserProfile() now calls backend API
+- handleSubmit() splits name into firstName/lastName
+- Better error handling
+
+### ✅ Testing
+- New integration tests
+- Environment checks
+- Manual test checklist
+
+## Documentation
+
+See parent directory for detailed docs:
+- `../FIX_SUMMARY.md` - What was changed
+- `../PROFILE_ISSUES.md` - Detailed fixes
+- `../ENV_CONFIG.md` - Environment setup
+- `../TESTING_GUIDE.md` - Quick reference
+
+## Success Criteria
+
+All of these should pass:
+- ✅ Profile loads from database (not sessionStorage)
+- ✅ Profile persists across page refreshes
+- ✅ Profile update works with firstName/lastName
+- ✅ Token validation works
+- ✅ Error handling is user-friendly
+- ✅ Data syncs across browser tabs
+
+## Next Steps
+
+1. Run `npm run checklist` to see what to test
+2. Run `npm test` for automated verification
+3. Test manually in browser
+4. Check `FIX_SUMMARY.md` for details
